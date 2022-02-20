@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "227677216025",
+    "project_id": "email-login-2b8a9",
+    "storage_bucket": "email-login-2b8a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227677216025:android:16422d11d2228a6a553988",
+        "android_client_info": {
+          "package_name": "com.example.firebase_tutorial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227677216025-fn44boco6cmb46rsi75envq4nhqdsr57.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcaa142DNEpYgjMFJGx0jhaACmIEvx-38"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227677216025-fn44boco6cmb46rsi75envq4nhqdsr57.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
