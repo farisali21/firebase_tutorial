@@ -2,16 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_tutorial/constants/decoration.dart';
 import 'package:flutter/material.dart';
 
-class Firestore extends StatefulWidget {
-  const Firestore({Key? key}) : super(key: key);
+import 'my_data.dart';
+
+class FirestorePage extends StatefulWidget {
+  final userUid;
+  final userEmail;
+  const FirestorePage(this.userUid, this.userEmail);
 
   @override
-  _FirestoreState createState() => _FirestoreState();
+  _FirestorePageState createState() => _FirestorePageState();
 }
 
-class _FirestoreState extends State<Firestore> {
-  TextEditingController collection = TextEditingController();
-  TextEditingController data = TextEditingController();
+class _FirestorePageState extends State<FirestorePage> {
+  TextEditingController name = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
+  TextEditingController address = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,11 +26,11 @@ class _FirestoreState extends State<Firestore> {
         child: Column(
           children: [
             TextField(
-              controller: collection,
+              controller: name,
               keyboardType: TextInputType.name,
               onChanged: (_) {},
               decoration: kTextFieldDecoration.copyWith(
-                hintText: 'Collection',
+                hintText: 'name',
                 hintStyle: const TextStyle(color: Colors.black54),
               ),
             ),
@@ -33,30 +38,44 @@ class _FirestoreState extends State<Firestore> {
               height: 20,
             ),
             TextField(
-              controller: data,
+              controller: phoneNumber,
               keyboardType: TextInputType.name,
               onChanged: (_) {},
               decoration: kTextFieldDecoration.copyWith(
-                hintText: 'data',
+                hintText: 'Phone Number',
                 hintStyle: const TextStyle(color: Colors.black54),
               ),
             ),
             SizedBox(
-              height: 20
+              height: 20,
             ),
+            TextField(
+              controller: address,
+              keyboardType: TextInputType.name,
+              onChanged: (_) {},
+              decoration: kTextFieldDecoration.copyWith(
+                hintText: 'address',
+                hintStyle: const TextStyle(color: Colors.black54),
+              ),
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: Size.fromHeight(40),
               ),
               onPressed: () {
+                print(widget.userUid);
                 FirebaseFirestore firestore = FirebaseFirestore.instance;
                 CollectionReference users = firestore.collection('users');
                 final Map<String, dynamic> userData = {
-                  'data': data.text,
+                  'name': name.text,
+                  'phone': phoneNumber.text,
+                  'address': address.text,
+                  'email': widget.userEmail,
                 };
-                users.doc(collection.text).set(userData);
+                users.doc(widget.userUid).set(userData);
               },
-              child: Text('Add'),
+              child: Text('Set My Data'),
             ),
             Spacer(),
             ElevatedButton(
@@ -66,11 +85,21 @@ class _FirestoreState extends State<Firestore> {
               onPressed: () async {
                 FirebaseFirestore firestore = FirebaseFirestore.instance;
                 CollectionReference users = firestore.collection('users');
-                final Map<String, dynamic> userData = {
-                  'data': data.text,
-                };
-                final userData1 = await users.doc(collection.text).get();
-                print(userData1['data']);
+
+                final userData1 = await users.doc(widget.userUid).get();
+                if(userData1['phone'] == null){
+                  print('you Have no data');
+                  return;
+                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MyData(
+                      name: userData1['name'],
+                      phone: userData1['phone'],
+                      address: userData1['address'],
+                    ),
+                  ),
+                );
               },
               child: Text('getData'),
             ),

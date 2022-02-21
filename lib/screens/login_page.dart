@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_tutorial/constants/decoration.dart';
+import 'package:firebase_tutorial/screens/fire_store_page.dart';
 import 'package:flutter/material.dart';
+
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -14,6 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey();
+  String? userUid;
+  late final userEmail;
 
   @override
   void dispose() {
@@ -32,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
           elevation: 0,
           automaticallyImplyLeading: false,
           leading: IconButton(
-            onPressed: (){},
+            onPressed: () {},
             icon: const Icon(
               Icons.arrow_back,
               color: Colors.black,
@@ -56,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-      body: Form(
+        body: Form(
           key: formKey,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -67,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
                   controller: emailController,
                   textAlign: TextAlign.start,
                   keyboardType: TextInputType.emailAddress,
-
                   validator: (value) {
                     if (value!.isEmpty || !value.contains('@')) {
                       return 'Invalid email!';
@@ -109,15 +113,17 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.all(12),
                     ),
                     onPressed: () async {
-                      final message = await signUp();
+                      final message = await signIn();
                       if (formKey.currentState!.validate()) {
                         if (message != 'Ok') {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(SnackBar(content: Text(message)));
                         } else {
-                          // Navigator.of(context).pushReplacement(
-                          //   MaterialPageRoute(builder: (context) => HomePage()),
-                          // );
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FirestorePage(userUid, userEmail),
+                            ),
+                          );
                         }
                       }
                     },
@@ -136,7 +142,9 @@ class _LoginPageState extends State<LoginPage> {
           .signInWithEmailAndPassword(
               email: emailController.text.trim(),
               password: passwordController.text.trim());
-      print(userCredential.user!.email);
+      print(userCredential.user!.uid);
+      userUid = userCredential.user!.uid;
+      userEmail = userCredential.user!.email;
       return 'Ok';
     } on FirebaseAuthException catch (e) {
       var errorMessage = 'Authentication failed';
@@ -156,8 +164,8 @@ class _LoginPageState extends State<LoginPage> {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim());
+              email: emailController.text.trim(),
+              password: passwordController.text.trim());
       CollectionReference users = firestore.collection('users');
       return 'Ok';
     } on FirebaseAuthException catch (e) {
