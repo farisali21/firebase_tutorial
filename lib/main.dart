@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_tutorial/screens/fire_store_page.dart';
 import 'package:firebase_tutorial/screens/login_page.dart';
+import 'package:firebase_tutorial/sign_up.dart';
 import 'package:flutter/material.dart';
 
 void main() async{
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: SignUpPage(),
     );
   }
 }
